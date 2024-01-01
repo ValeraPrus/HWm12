@@ -1,131 +1,141 @@
-from collections import UserDict
-from datetime import datetime
-import pickle
+from classbook import AddressBook, Record
+exit_list = ['good bye', 'close', 'exit']
+
+command_list = '  Command list: \n-hello \n-add ...\
+          \n-phone ... \n-show_all \n-birthday ...\
+          \n-good bye \n-close \n-exit\
+          \n-add_phone ... \n-remove_phone... \
+          \n-delete ... \n-search_contact ...'
 
 
-class Field:
-    def __init__(self, value):
-        if not self.is_valid(value):
-            raise ValueError
-        self.__value = value
-
-    @property
-    def value(self):
-        return self.__value
-
-    @value.setter
-    def value(self, value):
-        if not self.is_valid(value):
-            raise ValueError
-        self.__value = value
-
-    def is_valid(self, value):
-        return True
-
-    def __str__(self):
-        return str(self.value)
+phone_book = AddressBook()
 
 
-class Name(Field):
-    pass
+def main():
+    phone_book.load_book('testbook.bin')
+    handlers = {
+        'hello': hello_func,
+        'commands': commands_func,
+        'add_name': add_func,
+        'add_phone': add_phone_func,
+        'find_phone': phone_func,
+        'remove_phone': remove_phone_func,
+        'edit_phone': edit_phone_func,
+        'show_all': show_all_func,
+        'birthday': birthday_func,
+        'delete': delete_func,
+        'search': search_func
+               }
 
-
-class Phone(Field):
-    def is_valid(self, new_value):
-        if isinstance(new_value, str) and new_value.isdigit() and len(new_value) == 10:
-            return True
+    while True:
+        user = input('>>> ').lower()
+        user_date = user.split(' ')
+        command_handler = user_date.pop(0)
+        if user in exit_list:
+            print(exit_func())
+            break
+        elif command_handler in handlers:
+            print(handlers[command_handler](user_date))
         else:
-            return False
+            print('- Wrong command')
 
 
-class Birthday(Field):
-    def is_valid(self, date):
+def input_error(func):
+    def inner(*args, **kwargs):
         try:
-            datetime.strptime(date, "%Y-%m-%d")
-            return True
+            result = func(*args, **kwargs)
+            return result
+        except IndexError:
+            return '- incorrect data (IndexError)'
+        except KeyError:
+            return '- incorrect data (KeyError)'
         except ValueError:
-            return False
+            return '- incorrect data (ValueError)'
+
+    return inner
 
 
-class Record:
-    def __init__(self, name, birthday=None):
-        self.name = Name(name)
-        self.phones = []
-        if birthday:
-            self.birthday = Birthday(birthday)
-
-    def add_phone(self, numb):
-        self.phones.append(Phone(numb))
-
-    def remove_phone(self, numb):
-        for phone in self.phones:
-            if phone.value == numb:
-                self.phones.remove(phone)
-
-    def edit_phone(self, old_numb, new_numb):
-        for phone in self.phones:
-            if phone.value == old_numb:
-                phone.value = new_numb
-                break
-        else:
-            raise ValueError
-
-    def find_phone(self, numb):
-        for phone in self.phones:
-            if phone.value == numb:
-                return phone
-        return None
-
-    def __str__(self):
-        return f"Contact name: {self.name.value}, \
-                phones: {'; '.join(p.value for p in self.phones)}"
-
-    def days_to_birthday(self):
-        if self.birthday:
-            today = datetime.now().date()
-            next_birthday = datetime(today.year, *map(int, self.birthday.value.split("-"))).date()
-            if today > next_birthday:
-                next_birthday = datetime(today.year + 1, *map(int, self.birthday.value.split("-"))).date()
-            return (next_birthday - today).days
-        else:
-            return None
+@input_error
+def add_func(user_date):  # name and birthday=None (yyyy-mm-dd)
+    if len(user_date) == 1:
+        record = Record(user_date[0])
+        phone_book.add_record(record)
+    elif len(user_date) == 2:
+        record = Record(user_date[0], user_date[1])
+        phone_book.add_record(record)
+    else:
+        return '- Enter name and birthday'
+    return f'- New contact "{user_date[0]}" added'
 
 
-class AddressBook(UserDict):
-    def add_record(self, name):
-        self.data[name.name.value] = name
+@input_error
+def add_phone_func(user_date):  # name and phone
+    record = phone_book.find(user_date[0])
+    record.add_phone(user_date[1])
+    return f"- Phone number {user_date[1]} for name {user_date[0]} added"
 
-    def find(self, name):
-        return self.data.get(name)
 
-    def delete(self, name):
-        if name in self.data:
-            self.data.pop(name)
+@input_error
+def edit_phone_func(user_date):  # name, old_phone, new_phone
+    record = phone_book.find(user_date[0])
+    record.edit_phone(user_date[1], user_date[2])
+    return f"- Phone number for {user_date[0]} changed"
 
-    def iterator(self, N=5):
-        records = list(self.data.values())
-        for i in range(0, len(records), N):
-            yield records[i:i + N]
 
-    def save_book(self, filename):
-        with open(filename, 'wb') as file:
-            pickle.dump(self.data, file)
+@input_error
+def phone_func(user_date):  # name
+    record = phone_book.find(user_date[0])
+    return str(record)
 
-    def load_book(self, filename):
-        try:
-            with open(filename, 'rb') as file:
-                self.data = pickle.load(file)
-        except FileNotFoundError:
-            pass
 
-    def search_contact(self, search):
-        result = []
-        for record in self.data.values():
-            if search.lower() in record.name.value.lower():
-                result.append(record)
-            else:
-                for phone in record.phones:
-                    if search in phone.value:
-                        result.append(record)
-                        break
-        return result
+def exit_func():
+    phone_book.save_book('testbook.bin')
+    return '- Good bye!'
+
+
+def show_all_func(arg):
+    if not phone_book:
+        return 'Empty'
+    line = [str(record) for record in phone_book.data.values()]
+    return "\n".join(line)
+
+
+@input_error
+def remove_phone_func(user_date):  # name and phone
+    record = phone_book.find(user_date[0])
+    record.remove_phone(user_date[1])
+    return f"- Phone number {user_date[1]} for name {user_date[0]} removed"
+
+
+@input_error
+def birthday_func(user_date):  # name
+    record = phone_book.find(user_date[0])
+    to_birth = record.days_to_birthday()
+    if to_birth:
+        return f'- {record.birthday}\n- {to_birth} days to birthday'
+    else:
+        return '- Need date of birthday'
+
+
+@input_error
+def delete_func(user_date):  # name
+    phone_book.delete(user_date[0])
+    return f'{user_date[0]} phone number removed'
+
+
+def search_func(user_date):  # search
+    result = phone_book.search_contact(user_date[0])
+    return f'{result}'
+
+
+def commands_func(arg):
+    return f'{command_list}'
+
+
+def hello_func(arg):
+    return '- How can I help you?'
+
+
+if __name__ == '__main__':
+    print(f'- Hello :)\n\n{command_list}')
+    main()
