@@ -79,11 +79,15 @@ class Record:
                 return phone
         return None
 
-    def __str__(self):
-        return f"Contact name: '{self.name.value}', Phones: {'; '.join(p.value for p in self.phones)}, Birthday: {self.birthday}"
+   def __str__(self):
+        return f"Contact name: '{self.name.value}', \
+    Phones: {'; '.join(p.value for p in self.phones)}, \
+    Birthday: {self.birthday}"
 
     def __repr__(self):
-        return f"Contact name: '{self.name.value}', Phones: {'; '.join(p.value for p in self.phones)}, Birthday: {self.birthday}"
+        return f"Contact name: '{self.name.value}', \
+    Phones: {'; '.join(p.value for p in self.phones)}, \
+    Birthday: {self.birthday}"
 
     def days_to_birthday(self):
         if self.birthday:
