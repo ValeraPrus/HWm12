@@ -13,7 +13,7 @@ command_list = '  Command list: \n-hello \
           \n-remove_phone "enter recorded name\
  and phone which you want to remove"\
           \n-delete "enter recorded name"\
-          \n-search_contact ...'
+          \n-search ...'
 
 
 phone_book = AddressBook()
