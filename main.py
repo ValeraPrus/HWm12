@@ -1,11 +1,19 @@
 from classbook import AddressBook, Record
 exit_list = ['good bye', 'close', 'exit']
 
-command_list = '  Command list: \n-hello \n-add ...\
-          \n-phone ... \n-show_all \n-birthday ...\
+command_list = '  Command list: \n-hello \
+          \n-commands \n-add_name \
+"enter name and birthday (optional)" \
+    name and birthday=None (yyyy-mm-dd)\
+          \n-add_phone "enter recorded name and new phone"\
+    name and phone 1234567890\
+          \n-show_all \n-birthday "enter recorded name"\
           \n-good bye \n-close \n-exit\
-          \n-add_phone ... \n-remove_phone... \
-          \n-delete ... \n-search_contact ...'
+          \n-find_phone "enter recorded name" \
+          \n-remove_phone "enter recorded name\
+ and phone which you want to remove"\
+          \n-delete "enter recorded name"\
+          \n-search_contact ...'
 
 
 phone_book = AddressBook()
@@ -16,6 +24,7 @@ def main():
     handlers = {
         'hello': hello_func,
         'commands': commands_func,
+        'add': add_func,
         'add_name': add_func,
         'add_phone': add_phone_func,
         'find_phone': phone_func,
