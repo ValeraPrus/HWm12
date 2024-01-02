@@ -79,7 +79,7 @@ class Record:
                 return phone
         return None
 
-   def __str__(self):
+    def __str__(self):
         return f"Contact name: '{self.name.value}', \
     Phones: {'; '.join(p.value for p in self.phones)}, \
     Birthday: {self.birthday}"
