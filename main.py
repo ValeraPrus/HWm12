@@ -9,9 +9,10 @@ command_list = '  Command list: \n-hello \
     name and phone 1234567890\
           \n-show_all \n-birthday "enter recorded name"\
           \n-good bye \n-close \n-exit\
-          \n-find_phone "enter recorded name" \
+          \n-find_phone "enter recorded name"\
           \n-remove_phone "enter recorded name\
  and phone which you want to remove"\
+          \n-edit_phone "enter recorded name, old_phone, new_phone"\
           \n-delete "enter recorded name"\
           \n-search ...'
 
