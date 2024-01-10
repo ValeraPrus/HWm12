@@ -35,6 +35,7 @@ class Phone(Field):
         if isinstance(new_value, str) and new_value.isdigit() and len(new_value) == 10:
             return True
         else:
+            print('- incorrect phone, need 10 numbers')
             return False
 
 
@@ -44,6 +45,7 @@ class Birthday(Field):
             datetime.strptime(date, "%Y-%m-%d")
             return True
         except ValueError:
+            print('- incorrect date, need yyyy-mm-dd')
             return False
 
 
