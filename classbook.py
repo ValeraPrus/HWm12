@@ -53,7 +53,6 @@ class Record:
         self.phones = []
         if birthday:
             self.birthday = Birthday(birthday)
-            print(self.birthday)
         else:
             self.birthday = None
 
