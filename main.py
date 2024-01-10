@@ -68,10 +68,10 @@ def input_error(func):
 @input_error
 def add_func(user_date):  # name and birthday=None (yyyy-mm-dd)
     if len(user_date) == 1:
-        record = Record(user_date[0])
+        record = Record(user_date[0].capitalize())
         phone_book.add_record(record)
     elif len(user_date) == 2:
-        record = Record(user_date[0], user_date[1])
+        record = Record(user_date[0].capitalize(), user_date[1])
         phone_book.add_record(record)
     else:
         return '- Enter name and birthday'
