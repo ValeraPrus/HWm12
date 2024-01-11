@@ -81,12 +81,12 @@ class Record:
         return None
 
     def __str__(self):
-        return f"Contact name: '{self.name.value}', \
+        return f"Contact name: '{self.name.value.capitalize()}', \
     Phones: {'; '.join(p.value for p in self.phones)}, \
     Birthday: {self.birthday}"
 
     def __repr__(self):
-        return f"Contact name: '{self.name.value}', \
+        return f"Contact name: '{self.name.value.capitalize()}', \
     Phones: {'; '.join(p.value for p in self.phones)}, \
     Birthday: {self.birthday}"
 
