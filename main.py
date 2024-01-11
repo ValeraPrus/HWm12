@@ -2,7 +2,7 @@ from classbook import AddressBook, Record
 exit_list = ['good bye', 'close', 'exit']
 
 command_list = '  Command list: \n-hello \
-          \n-commands \n-add_name \
+          \n-help \n-add_name \
 "enter name and birthday (optional)" \
     name and birthday=None (yyyy-mm-dd)\
           \n-add_phone "enter recorded name and new phone"\
@@ -24,7 +24,7 @@ def main():
     phone_book.load_book('testbook.bin')
     handlers = {
         'hello': hello_func,
-        'commands': commands_func,
+        'help': commands_func,
         'add': add_func,
         'add_name': add_func,
         'add_phone': add_phone_func,
@@ -147,5 +147,5 @@ def hello_func(arg):
 
 
 if __name__ == '__main__':
-    print(f'- Hello :)\n\n{command_list}')
+    print('- Hello :)\n\nEnter "help" for look command list')
     main()
